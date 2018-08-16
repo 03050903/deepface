@@ -1,3 +1,4 @@
+import logging
 import os
 import h5py
 
@@ -178,8 +179,7 @@ class FaceRecognizerResnet(FaceRecognizer):
         init = tf.global_variables_initializer()
 
         config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
-        sess = tf.Session(config=config)
-        self.persistent_sess = sess
+        self.persistent_sess = tf.Session(config=config)
 
         # Warm-up:
         self.persistent_sess.run(init, feed_dict={
@@ -197,8 +197,13 @@ class FaceRecognizerResnet(FaceRecognizer):
         else:
             db_path = DeepFaceConfs.get()['recognizer']['resnet'].get('db', '')
             db_path = os.path.join(dir_path, db_path)
-        with open(db_path, 'rb') as f:
-            self.db = pickle.load(f)
+        try:
+            with open(db_path, 'rb') as f:
+                u = pickle._Unpickler(f)
+                u.encoding = 'latin1'
+                self.db = u.load()
+        except Exception as e:
+            logging.warning('db file not loaded, %s, err=%s' % (db_path, str(e)))
 
     def name(self):
         return FaceRecognizerResnet.NAME
@@ -221,11 +226,14 @@ class FaceRecognizerResnet(FaceRecognizer):
 
         if rois:
             new_rois = self.get_new_rois(rois=rois)
+            for face, roi in zip(faces, new_rois):
+                face.face_roi = roi
+        else:
+            return np.array([]), np.array([])
 
         probs = []
         feats = []
-        for roi_chunk in grouper(new_rois, self.batch_size,
-                                 fillvalue=np.zeros((224, 224, 3), dtype=np.uint8)):
+        for roi_chunk in grouper(new_rois, self.batch_size, fillvalue=np.zeros((224, 224, 3), dtype=np.uint8)):
             prob, feat = self.persistent_sess.run([self.network['out'], self.network['feat']],
                                                   feed_dict={self.input_node: roi_chunk})
             feat = [np.squeeze(x) for x in feat]

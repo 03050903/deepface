@@ -1,6 +1,5 @@
-#!/bin/bash
+echo "download model graph : Detectors"
 
-echo "[download] model graph : VGGFace-Resnet"
 DIR="$(cd "$(dirname "$0")" && pwd)"
 
 extract_download_url() {
@@ -25,5 +24,5 @@ download_mediafire() {
         curl -L -o $( extract_filename $1 ) -C - $( extract_download_url $1 )
 }
 
-$( download_mediafire http://www.mediafire.com/file/datqeencsrqua22/rcmalli_vggface_tf_resnet50.h5 )
-$( download_mediafire http://www.mediafire.com/file/sc2fo5xcktwbqkd/rcmalli_vggface_labels_v2.npy )
+$( download_mediafire http://www.mediafire.com/file/ivwws1znd4y2v9y/graph_mobilenet_v2_fddb_180627.pb )
+$( download_mediafire http://www.mediafire.com/file/a04pe6qzlevsso8/graph_mobilenet_v2_all_180627.pb )

@@ -6,10 +6,11 @@ import os
 import subprocess
 import setuptools
 
-_VERSION = '0.1.0'
+_VERSION = '0.1.1'
 
 cwd = os.path.dirname(os.path.abspath(__file__))
 subprocess.check_output(["bash", "deepface/detectors/dlib/download.sh"], cwd=cwd)
+subprocess.check_output(["bash", "deepface/detectors/ssd/download.sh"], cwd=cwd)
 subprocess.check_output(["bash", "deepface/recognizers/vggface/download.sh"], cwd=cwd)
 subprocess.check_output(["bash", "deepface/recognizers/vggface2_resnet/download.sh"], cwd=cwd)
 
@@ -43,6 +44,9 @@ setuptools.setup(
     package_dir={},
     packages=setuptools.find_packages(exclude=['tests']),
     package_data={'deepface': ['detectors/dlib/shape_predictor_68_face_landmarks.dat',
+                               'detectors/ssd/graph_inception_v2_fddb.pb',
+                               'detectors/ssd/graph_mobilenet_v2_fddb_180627.pb',
+                               'detectors/ssd/graph_mobilenet_v2_all_180627.pb',
                                'confs/basic.yaml',
                                'recognizers/vggface/weight.mat',
                                'recognizers/vggface/db_blackpink.pkl',
