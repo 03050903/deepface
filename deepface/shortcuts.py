@@ -8,6 +8,7 @@ from deepface.confs.conf import DeepFaceConfs
 from deepface.detectors.detector_dlib import FaceDetectorDlib
 from deepface.recognizers.recognizer_vgg import FaceRecognizerVGG
 from deepface.recognizers.recognizer_resnet import FaceRecognizerResnet
+from deepface.recognizers.recognizer_resnet_trained import FaceRecognizerResnetTrained
 
 
 def get_detector(name='dlib'):
@@ -35,6 +36,8 @@ def get_recognizer(name='vgg', db=None):
         return FaceRecognizerVGG(custom_db=db)
     elif name == 'vgg2':
         return FaceRecognizerResnet(custom_db=db)
+    elif name == 'vgg2_trained':
+        return FaceRecognizerResnetTrained(custom_db=db)
 
     return None
 
@@ -60,6 +63,6 @@ def save_features(img_folder_path, output_path=None, method="vgg"):
 
     import pickle
     if not output_path:
-        output_path = os.path.join("recognizers/vggface", os.path.basename(img_folder_path) + ".pkl")
+        output_path = os.path.join("deepface/recognizers/vggface2_resnet", os.path.basename(img_folder_path) + ".pkl")
     with open(output_path, 'wb') as f:
         pickle.dump(features, f, pickle.HIGHEST_PROTOCOL)
